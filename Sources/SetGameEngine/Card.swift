@@ -96,3 +96,10 @@ extension Card: CustomStringConvertible {
         return "\(self.count) - \(self.color) - \(self.fill) - \(self.shape)\n"
     }
 }
+
+extension Card: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.description)
+    }
+
+}
