@@ -39,9 +39,18 @@ public class Engine {
         return cardsOnTable
     }
     
-    public func draw(count: Int = 12) -> [Card] {
-        guard cardsOnTable.count < 12 else { return [] }
+    public func draw() -> [Card] {
+        guard cardsOnTable.count < 12 else { return playingCards }
         let newCards = Array(cardStock.shuffled().prefix(through: 12 - cardsOnTable.count - 1))
+        cardStock.remove(objects: newCards)
+        cardsOnTable += newCards
+        
+        return playingCards
+    }
+    
+    public func addCards() -> [Card] {
+        guard cardsOnTable.count < 15 else { return playingCards }
+        let newCards = Array(cardStock.shuffled().prefix(through: 15 - cardsOnTable.count - 1))
         cardStock.remove(objects: newCards)
         cardsOnTable += newCards
         
