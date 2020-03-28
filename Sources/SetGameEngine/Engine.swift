@@ -57,11 +57,22 @@ public class Engine {
         return playingCards
     }
     
-    public func findSet(in cards: [Card]) -> [Card]? {
+    public func setFound(set: [Card]) -> [Card] {
+        cardsOnTable.remove(objects: set)
+        return playingCards
+    }
+    
+    public func findSet(in cards: [Card], except: [Card]? = nil) -> [Card]? {
         let combinations = self.combinations(source: cards, takenBy: 3).shuffled()
         
         for setOfCards in combinations {
             if isSet(of: setOfCards) {
+                if except != nil && combinations.count > 1 {
+                    if except!.sorted() == setOfCards.sorted() {
+                        print("existing set\n")
+                        continue
+                    }
+                }
                 return setOfCards
             }
         }
