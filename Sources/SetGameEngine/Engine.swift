@@ -45,7 +45,7 @@ public class Engine {
         cardStock.remove(objects: newCards)
         cardsOnTable += newCards
         
-        return playingCards
+        return newCards
     }
     
     public func addCards() -> [Card] {
