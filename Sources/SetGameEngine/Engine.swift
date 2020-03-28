@@ -8,9 +8,43 @@
 
 import Foundation
 
+public protocol GameEngineDelegate: class {
+    func noSetFound()
+    func noMoreCards()
+    func gameEnded()
+}
+
 public class Engine {
-    private var cardStock: [Card]
-    private var cardsOnTable: [Card]
+    
+    public weak var delegate: GameEngineDelegate?
+    
+    private var cardStock: [Card] {
+        didSet {
+            if cardStock.count == 0 {
+                checkForGameEnd()
+                delegate?.noMoreCards()
+            }
+        }
+    }
+    
+    private var cardsOnTable: [Card] {
+        didSet {
+            if !isSetExists() {
+                delegate?.noSetFound()
+            }
+        }
+    }
+    
+    private func checkForGameEnd() {
+        if !isSetExists() {
+            delegate?.gameEnded()
+        }
+    }
+    
+    private func isSetExists() -> Bool {
+        return findAllSets(in: cardsOnTable).count > 0
+    }
+    
     private var players: Int = 1
     
     public init(players: Int) {
@@ -41,11 +75,20 @@ public class Engine {
     
     public func draw() -> [Card] {
         guard cardsOnTable.count < 12 else { return playingCards }
-        let newCards = Array(cardStock.shuffled().prefix(through: 12 - cardsOnTable.count - 1))
+        guard cardStock.count > 0 else { return [] }
+        
+        let slice = min(cardStock.count, 12 - cardsOnTable.count)
+        let newCards = Array(cardStock.shuffled().prefix(through: slice - 1))
+        
         cardStock.remove(objects: newCards)
         cardsOnTable += newCards
         
         return newCards
+    }
+    
+    public func redraw() -> [Card] {
+        cardStock += cardsOnTable
+        return draw()
     }
     
     public func addCards() -> [Card] {
