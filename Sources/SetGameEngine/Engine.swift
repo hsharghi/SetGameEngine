@@ -47,7 +47,7 @@ public class Engine<T: SetPlayer> {
     
     private var _players: [T]
     
-    var players: [T] {
+    public var players: [T] {
         get {
             return _players
         }
