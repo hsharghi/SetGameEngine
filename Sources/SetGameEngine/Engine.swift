@@ -14,7 +14,7 @@ public protocol GameEngineDelegate: class {
     func gameEnded()
 }
 
-public class Engine {
+public class Engine<T: SetPlayer> {
     
     public weak var delegate: GameEngineDelegate?
     
@@ -45,9 +45,15 @@ public class Engine {
         return findAllSets(in: cardsOnTable).count > 0
     }
     
-    private var players: Int = 1
+    private var _players: [T]
     
-    public init(players: Int) {
+    var players: [T] {
+        get {
+            return _players
+        }
+    }
+    
+    public init(players: [T]) {
         
         var cards = [Card]()
         
@@ -62,7 +68,7 @@ public class Engine {
         }
         self.cardStock = cards
         self.cardsOnTable = []
-        self.players = players
+        self._players = players
     }
     
     public var pileOfCards: [Card] {
@@ -100,8 +106,19 @@ public class Engine {
         return playingCards
     }
     
-    public func setFound(set: [Card]) -> [Card] {
+    public func addScore(of cards: [Card], to player: inout T) {
+        player.addScoreCards(cards: cards)
+    }
+    
+    public func removeScore(count: Int, from player: inout T) -> [Card] {
+        return player.removeFromScore(numberOfCards: count)
+    }
+    
+    public func setFound(set: [Card], for player: inout T) -> [Card] {
+        guard isSet(of: set) else { return playingCards }
+        
         cardsOnTable.remove(objects: set)
+        addScore(of: set, to: &player)
         return playingCards
     }
     
