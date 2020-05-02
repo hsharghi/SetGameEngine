@@ -33,7 +33,7 @@ extension Array where Element: Equatable {
 
 }
 
-public extension Sequence where Element: Equatable {
+extension Sequence where Element: Equatable {
     var uniqueElements: [Element] {
         return self.reduce(into: []) {
             uniqueElements, element in
